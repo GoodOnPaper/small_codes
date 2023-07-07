@@ -99,7 +99,8 @@ def main() -> None:
                    > -        Subtract 1 from c1\
                    ]\
                    < .        Print out c0 which has the value 55 which translates to \"7\"!")
-# Credit to wikipedia
+# Credit to wikipedia, with text and everything so i can make sure it 
+# ignores it as it should.
     machine1.show_state()
 
 
