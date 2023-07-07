@@ -1,7 +1,7 @@
 import typing # noqa
 
 
-def erastotenes_sieve(n: int):
+def erastotenes_sieve(n: int) -> list[int]:
     if n < 1:
         return []
     primes: list[int] = [2]
