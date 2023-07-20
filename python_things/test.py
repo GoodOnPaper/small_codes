@@ -18,9 +18,31 @@ def erastotenes_sieve(n: int) -> list[int]:
     return primes
 
 
+#  doing some math for myself
+def tempfun(n: int) -> list[int]:
+    primes = erastotenes_sieve(n + 2)
+    primes = primes[2:]
+    result: list[int] = []
+    for iter in range(len(primes)):
+        for idx in range(0, iter+1):
+            result.append((primes[iter]*primes[idx]))
+    return sorted(result)
+
+
+# input is sorted list of numbers where atleast one is higher than one
+# hundred, result is list that says how many numbers were there for each
+# hundred. (sorry for bad english)
+def count_hundreds(list: list[int]) -> list[int]:
+    result = [0 for _ in range((list[-1] // 100)+1)]
+    for num in list:
+        result[num // 100] += 1
+    return result
+
+
 def main():
-    x: int = int(input("give amount of primes:"))
-    print(erastotenes_sieve(x))
+    nums = tempfun(30)
+    print(count_hundreds(nums))
+    print(nums)
 
 
 if __name__ == "__main__":
