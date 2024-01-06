@@ -2,8 +2,13 @@
 //! zig refer to std.DoublyLinkedList on ziglang.org.
 
 const std = @import("std");
+
 const print = @import("std").debug.print;
+const assert = std.testing.expect;
+
 const Allocator = std.mem.Allocator;
+var alloc = std.heap.GeneralPurposeAllocator(.{}){};
+const gpa = alloc.allocator();
 
 fn LinkedList(comptime T: type) type {
     return struct {
@@ -49,63 +54,67 @@ fn LinkedList(comptime T: type) type {
             }
             return;
         }
-        pub fn retArray(this: *Self, allocator: Allocator) ![*]T {
-            const empty: [0]T = undefined;
-            var array: []T = try allocator.alloc(T, this.len);
+        pub fn retArray(this: *Self, allocator: Allocator) []T {
+            var empty: []T = undefined;
+            var array = allocator.alloc(T, this.len) catch {
+                return empty;
+            };
             var curr_node: *Node = undefined;
             if (this.first) |that| {
                 curr_node = that;
                 array[0] = that.data;
             } else {
-                return &empty;
+                return array;
             }
-            for (1..this.len) |i| {
-                if (curr_node.next) |that| {
-                    array[i] = curr_node.data;
-                    curr_node = that;
-                } else {
-                    return &empty;
-                }
+            var index: usize = 0;
+            while (curr_node.next) |that| {
+                array[index] = curr_node.data;
+                curr_node = that;
+                index += 1;
+            } else {
+                array[index] = curr_node.data;
+                // off by one haha
+                return array;
             }
-            return &empty;
+            return array;
         }
     };
 }
 
-pub fn main() !void {
-    var alloc = std.heap.GeneralPurposeAllocator(.{}){};
-    const gpa = alloc.allocator();
-    print("test\n", .{});
-    const dllist = LinkedList(i32);
-    var node1 = dllist.Node{
+test "slice test" {
+    //making a list
+    var exlist = LinkedList(i32){
+        .first = null,
+        .last = null,
+        .len = 1,
+    };
+    //making nodes and inserting
+    var node1 = LinkedList(i32).Node{
         .prev = null,
         .next = null,
         .data = 34,
     };
-    var exlist = LinkedList(i32){
-        .first = &node1,
-        .last = &node1,
-        .len = 1,
-    };
-    var node11 = LinkedList(i32).Node{
-        .prev = &node1,
+    var node2 = LinkedList(i32).Node{
+        .prev = null,
         .next = null,
         .data = 45,
     };
-    exlist.last = &node11;
-    exlist.len += 1;
-    exlist.first.?.next = &node11;
-    var node111 = LinkedList(i32).Node{
+    var node3 = LinkedList(i32).Node{
         .prev = null,
         .next = null,
         .data = 54,
     };
-    exlist.insertAtFront(&node111);
-    exlist.printNodes();
-    var listTest: [*]i32 = try exlist.retArray(gpa);
-    for (0..exlist.len) |i| {
-        _ = i;
-        print("{d}\n", .{listTest[0]});
-    }
-    print("end success\n", .{});
+    exlist.insertAtFront(&node3);
+    exlist.insertAtFront(&node2);
+    exlist.insertAtFront(&node1);
+    //testing .retarray
+    var listTest = exlist.retArray(gpa);
+    try assert(listTest[0] == 34);
+    try assert(listTest[1] == 45);
+    try assert(listTest[2] == 54);
+    gpa.free(listTest);
+}
+
+pub fn main() !void {
+    print("end\n", .{});
 }
