@@ -24,15 +24,15 @@ fn WhoWon(H: u8, C: u8) u2 {
         return 2;
     }
 }
-fn ChoiceToStr(C: u8) *const [9:0]u8 {
+fn ChoiceToStr(C: u8) []const u8 {
     if (C == 0) {
-        return "rock    \n";
+        return "rock\n";
     } else if (C == 1) {
-        return "paper   \n";
+        return "paper\n";
     } else if (C == 2) {
         return "scissors\n";
     } else {
-        return "        \n";
+        return "\n";
     }
 }
 pub fn playRockPaperScissorsVSComputer() void {
