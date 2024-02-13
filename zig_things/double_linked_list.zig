@@ -55,7 +55,7 @@ fn LinkedList(comptime T: type) type {
             return;
         }
         pub fn retArray(this: *Self, allocator: Allocator) []T {
-            var empty: []T = undefined;
+            const empty: []T = undefined;
             var array = allocator.alloc(T, this.len) catch {
                 return empty;
             };
@@ -108,7 +108,7 @@ test "slice test" {
     exlist.insertAtFront(&node2);
     exlist.insertAtFront(&node1);
     //testing .retarray
-    var listTest = exlist.retArray(gpa);
+    const listTest = exlist.retArray(gpa);
     try assert(listTest[0] == 34);
     try assert(listTest[1] == 45);
     try assert(listTest[2] == 54);
