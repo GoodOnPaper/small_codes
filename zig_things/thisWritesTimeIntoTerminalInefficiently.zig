@@ -1,3 +1,4 @@
+//!there is a tool that does most of this : std.time.epoch.[etc.]
 const std = @import("std");
 const time = std.time;
 const stdOut = std.io.getStdOut();
